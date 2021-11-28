@@ -10,7 +10,7 @@ steps:
   
   # Deploy container image to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'run', 'deploy', 'coins-elixir', 
+  args: ['beta', 'run', 'deploy', 'crypto-api', 
   '--image', 'gcr.io/$PROJECT_ID/github.com/franknfjr/crypto_api', 
   '--region', 'us-central1', '--allow-unauthenticated', '--port=4000', 
   '--add-cloudsql-instances=tests-333512:us-central1:coins-elixir', 
