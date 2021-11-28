@@ -13,7 +13,7 @@ steps:
   args: ['beta', 'run', 'deploy', 'crypto-api', 
   '--image', 'gcr.io/$PROJECT_ID/github.com/franknfjr/crypto_api', 
   '--region', 'us-central1', '--allow-unauthenticated', '--port=4000', 
-  '--add-cloudsql-instances=dulcet-velocity-333417:us-central1:coins-elixir', 
+  '--add-cloudsql-instances=tests-333512:us-central1:coins-elixir', 
   '--update-secrets=DATABASE_URL=crypto_api:latest,SECRET_KEY_BASE=crypto_api:latest']
 images:
 - gcr.io/$PROJECT_ID/github.com/franknfjr/crypto_api
