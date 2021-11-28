@@ -16,7 +16,7 @@ defmodule CryptoApiWeb.Router do
 
   scope "/", CryptoApiWeb do
     pipe_through :api
-    
+
     resources("/coins", CoinController)
   end
 

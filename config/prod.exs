@@ -19,6 +19,7 @@ config :logger, level: :info
 config :crypto_api, CryptoApi.Repo,
   database: "crypto-api",
   socket_dir: "/tmp/cloudsql/dulcet-velocity-333417:us-central1:coins-elixir"
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
