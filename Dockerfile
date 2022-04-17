@@ -1,55 +1,23 @@
-FROM elixir:1.12.2-alpine AS build
+FROM elixir:alpine AS build
+ARG app_name=crypto_api
+ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
+WORKDIR /opt/app
+RUN apk add build-base
+RUN apk update \
+    && mix local.rebar --force \
+    && mix local.hex --force
+COPY . .
+RUN mix do deps.get, deps.compile, compile
+RUN mix release \
+    && mv _build/prod/rel/${app_name} /opt/release \
+    && mv /opt/release/bin/${app_name} /opt/release/bin/start_server
 
-# install build dependencies
-RUN apk add --no-cache build-base npm git python3
+RUN apk update \
+    && apk --no-cache --update add bash ca-certificates openssl-dev
 
-# prepare build dir
-WORKDIR /app
+ENV PORT=4000 MIX_ENV=prod REPLACE_OS_VARS=true
+WORKDIR /opt/app
 
-# install hex + rebar
-RUN mix local.hex --force && \
-    mix local.rebar --force
+EXPOSE 4000
 
-# set build ENV
-ENV MIX_ENV=prod
-
-# install mix dependencies
-COPY mix.exs mix.lock ./
-COPY config config
-RUN mix do deps.get, deps.compile
-
-COPY priv priv
-COPY assets assets
-RUN mix phx.digest
-
-# compile and build release
-COPY lib lib
-RUN mix do compile, release
-
-# prepare release image
-FROM alpine AS app
-
-# RUN apk add --no-cache openssl ncurses-libs
-RUN apk upgrade --no-cache && \
-    apk add --no-cache bash openssl libgcc libstdc++ ncurses-libs ca-certificates openssl-dev \
-    && mkdir -p /usr/local/bin \
-    && wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 \
-        -O /usr/local/bin/cloud_sql_proxy \
-    && chmod +x /usr/local/bin/cloud_sql_proxy \
-    && mkdir -p /tmp/cloudsql
-
-ENV PORT=4000 GCLOUD_PROJECT_ID=${project_id} REPLACE_OS_VARS=true
-EXPOSE ${PORT}
-
-WORKDIR /app
-
-RUN chown nobody:nobody /app
-
-USER nobody:nobody
-
-COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/crypto_api ./
-
-ENV HOME=/app
-
-CMD (/usr/local/bin/cloud_sql_proxy -projects=${GCLOUD_PROJECT_ID} -dir=/tmp/cloudsql &); \
-    exec bin/crypto_api start
+CMD /opt/release/bin/start_server start
