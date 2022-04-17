@@ -1,12 +1,6 @@
 /_build/
 /deps/
 /doc/
-/cover/
-/.fetch
-*.ez
-crypto_api-*.tar
-erl_crash.dump
-npm-debug.log
 /priv/static/
 /test/
 /tmp/
