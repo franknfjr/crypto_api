@@ -2,7 +2,7 @@ defmodule CryptoApiWeb.Router do
   use CryptoApiWeb, :router
 
   alias CryptoApiWeb.CoinController
-  
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
