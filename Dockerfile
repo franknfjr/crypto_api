@@ -1,37 +1,24 @@
-FROM elixir:1.12.3-alpine@sha256:138f5642181e758028de51143d969af64feaceb01375dd6516d56aa562152aea AS build
+#Dockerfile
+FROM bitwalker/alpine-elixir-phoenix:1.12.2
 
-RUN apk add --no-cache build-base npm git python2
-
-WORKDIR /app
-
-RUN mix local.hex --force && \
-    mix local.rebar --force
-
+# Set mix env and ports
 ENV MIX_ENV=prod
+ENV PORT=4000
 
-COPY mix.exs mix.lock ./
-COPY config config
-RUN mix do deps.get --only-prod, deps.compile
-
-COPY assets assets
-
-# Must copy source code before asset build.
-# PurgeCSS needs to scan the source for e.g. Tailwind classes.
-COPY lib lib
-ENV NODE_ENV=production
-RUN mix do assets.deploy, compile, release
-
-FROM alpine:3.13.6@sha256:e15947432b813e8ffa90165da919953e2ce850bef511a0ad1287d7cb86de84b5 AS app
-RUN apk add --no-cache openssl ncurses-libs libstdc++ lsof
+# Cache elixir deps
 
 WORKDIR /app
 
-RUN chown nobody:nobody /app
+COPY . .
 
-USER nobody:nobody
+RUN rm -rf _build && rm -rf .elixir_ls
+RUN mix clean
 
-COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/crypto_api ./
+RUN mix deps.get
+RUN mix deps.compile
 
-ENV HOME=/app
+# Run frontend build, compile, and digest assets
+# RUN cd assets/ && npm run deploy
+# RUN mix do compile, phx.digest
 
-CMD ["bin/crypto_api", "start"]
+CMD ["mix", "phx.server"]

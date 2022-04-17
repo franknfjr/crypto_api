@@ -16,12 +16,12 @@ config :crypto_api, CryptoApiWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
-# config :crypto_api, CryptoApi.Repo,
-#   database: "crypto-api",
-#   username: "postgres",
-#   password: "postgres",
-#   socket_dir: "/tmp/cloudsql/cryptoapi-347423:us-central1:cryptodb",
-#   pool_size: 10
+config :crypto_api, CryptoApi.Repo,
+  username: "postgres",
+  password: "postgres",
+  database: "hellodb",
+  socket_dir: "/tmp/cloudsql/cryptoapi-347521:us-central1:hellodb",
+  pool_size: 15
 
 # ## SSL Support
 #

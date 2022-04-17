@@ -10,10 +10,10 @@ steps:
   
   # Deploy container image to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'run', 'deploy', 'crypto-api', 
+  args: ['beta', 'run', 'deploy', 'hellodb', 
   '--image', 'gcr.io/$PROJECT_ID/github.com/franknfjr/crypto_api', 
   '--region', 'us-central1', '--allow-unauthenticated', '--port=4000', 
-  '--add-cloudsql-instances=cryptoapi-347423:us-central1:cryptodb', 
+  '--add-cloudsql-instances=cryptoapi-347521:us-central1:hellodb', 
   '--update-secrets=DATABASE_URL=crypto_api:latest,SECRET_KEY_BASE=crypto_api:latest']
 images:
 - gcr.io/$PROJECT_ID/github.com/franknfjr/crypto_api
