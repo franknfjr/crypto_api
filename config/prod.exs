@@ -18,7 +18,7 @@ config :logger, level: :info
 
 config :crypto_api, CryptoApi.Repo,
   database: "crypto-api",
-  socket_dir: "/tmp/cloudsql/cryptoapi-347423:us-central1:cryptodb"
+  socket_dir: "/tmp/cloudsql/cryptoapi-347423:us-central1:cryptodb/"
 
 # ## SSL Support
 #
