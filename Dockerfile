@@ -1,23 +1,37 @@
-FROM elixir:alpine AS build
-ARG app_name=crypto_api
-ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
-WORKDIR /opt/app
-RUN apk add build-base
-RUN apk update \
-    && mix local.rebar --force \
-    && mix local.hex --force
-COPY . .
-RUN mix do deps.get, deps.compile, compile
-RUN mix release \
-    && mv _build/prod/rel/${app_name} /opt/release \
-    && mv /opt/release/bin/${app_name} /opt/release/bin/start_server
+FROM elixir:1.12.3-alpine@sha256:138f5642181e758028de51143d969af64feaceb01375dd6516d56aa562152aea AS build
 
-RUN apk update \
-    && apk --no-cache --update add bash ca-certificates openssl-dev
+RUN apk add --no-cache build-base npm git python2
 
-ENV PORT=4000 MIX_ENV=prod REPLACE_OS_VARS=true
-WORKDIR /opt/app
+WORKDIR /app
 
-EXPOSE 4000
+RUN mix local.hex --force && \
+    mix local.rebar --force
 
-CMD /opt/release/bin/start_server start
+ENV MIX_ENV=prod
+
+COPY mix.exs mix.lock ./
+COPY config config
+RUN mix do deps.get --only-prod, deps.compile
+
+COPY assets assets
+
+# Must copy source code before asset build.
+# PurgeCSS needs to scan the source for e.g. Tailwind classes.
+COPY lib lib
+ENV NODE_ENV=production
+RUN mix do assets.deploy, compile, release
+
+FROM alpine:3.13.6@sha256:e15947432b813e8ffa90165da919953e2ce850bef511a0ad1287d7cb86de84b5 AS app
+RUN apk add --no-cache openssl ncurses-libs libstdc++ lsof
+
+WORKDIR /app
+
+RUN chown nobody:nobody /app
+
+USER nobody:nobody
+
+COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/crypto_api ./
+
+ENV HOME=/app
+
+CMD ["bin/crypto_api", "start"]
