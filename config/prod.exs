@@ -18,7 +18,7 @@ config :logger, level: :info
 
 config :crypto_api, CryptoApi.Repo,
   database: "crypto-api",
-  socket: "/cloudsql/tests-333512:us-central1:coins-elixir"
+  socket: "/cloudsql/cryptoapi-347423:us-central1:cryptodb/.s.PGSQL.5432"
 
 # ## SSL Support
 #
