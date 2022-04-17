@@ -38,7 +38,7 @@ RUN apk upgrade --no-cache && \
     && chmod +x /usr/local/bin/cloud_sql_proxy \
     && mkdir -p /tmp/cloudsql
 
-ENV PORT=8080 GCLOUD_PROJECT_ID=${project_id} REPLACE_OS_VARS=true
+ENV PORT=4000 GCLOUD_PROJECT_ID=${project_id} REPLACE_OS_VARS=true
 EXPOSE ${PORT}
 
 WORKDIR /app
