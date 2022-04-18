@@ -1,8 +1,6 @@
 defmodule CryptoApiWeb.Router do
   use CryptoApiWeb, :router
 
-  alias CryptoApiWeb.CoinController
-
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -19,7 +17,7 @@ defmodule CryptoApiWeb.Router do
   scope "/", CryptoApiWeb do
     pipe_through :api
 
-    resources("/coins", CoinController)
+    resources "/coins", CoinController
   end
 
   # Other scopes may use custom stacks.
