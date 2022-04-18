@@ -17,10 +17,8 @@ config :crypto_api, CryptoApiWeb.Endpoint,
 config :logger, level: :info
 
 config :crypto_api, CryptoApi.Repo,
-  username: "postgres",
-  password: "postgres",
   database: "hellodb",
-  socket: "/cloudsql/cryptoapi-347521:us-central1:hellodb",
+  socket_dir: "/cloudsql/cryptoapi-347521:us-central1:hellodb",
   pool_size: 15
 
 # ## SSL Support
